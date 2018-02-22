@@ -15,3 +15,5 @@ To lock
 
 To Unlock
 `lockView.unlock()`
+
+[![Watch the video](https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/floating_lock_button_vid.mp4)](https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/floating_lock_button_vid.mp4)
