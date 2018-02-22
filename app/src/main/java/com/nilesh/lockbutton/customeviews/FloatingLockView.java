@@ -6,7 +6,6 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -82,9 +81,19 @@ public class FloatingLockView extends FrameLayout {
 
     public void init(Context context, AttributeSet attrs) {
         View rootView = LayoutInflater.from(context).inflate(R.layout.layout_include_lock_view, this, true);
-        mLockIcon = rootView.findViewById(R.id.lock_icon);
         bgView = rootView.findViewById(R.id.t_view);
+        mLockIcon = rootView.findViewById(R.id.lock_icon);
         update();
+
+        mLockIcon.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AnimUtils.scaleViewAnim(v, 1.5f, 1.5f, 1.5f, 1.5f);
+                mLockIcon.setOnTouchListener(touchListener);
+                return false;
+            }
+        });
+
         mLockIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,15 +104,9 @@ public class FloatingLockView extends FrameLayout {
                 }
             }
         });
-        mLockIcon.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AnimUtils.scaleViewAnim(v, 1.5f, 1.5f, 1.5f, 1.5f);
-                mLockIcon.setOnTouchListener(touchListener);
-                return false;
-            }
-        });
+
         final FrameLayout parent = findViewById(R.id.parent_view);
+
         parent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -178,7 +181,6 @@ public class FloatingLockView extends FrameLayout {
                     lastAction = event.getAction();
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    Log.d("Parems", lockHeight + ":Lock height:" + availableWidth + ":Left:" + mLayoutParams.leftMargin + " :top:" + mLayoutParams.topMargin + ":right:" + mLayoutParams.rightMargin + ":mLayoutParams.bottomMargin:" + mLayoutParams.bottomMargin);
                     if (mLayoutParams.leftMargin >= 0 && mLayoutParams.topMargin >= 0 && mLayoutParams.rightMargin >= 0 &&
                             mLayoutParams.bottomMargin >= 0 && mLayoutParams.topMargin < availableHeight - lockHeight && mLayoutParams.leftMargin < availableWidth - lockHeight) {
                         mLayoutParams.leftMargin = initialX + (int) (event.getRawX() - initialTouchX) - lockHeight;
