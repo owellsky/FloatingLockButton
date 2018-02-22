@@ -17,97 +17,89 @@ import android.widget.FrameLayout;
 import com.nilesh.lockbutton.R;
 import com.nilesh.lockbutton.utils.AnimUtils;
 
-/**
- * Created by Nilesh.Pawate on 05/02/2018.
- */
-
 public class FloatingLockView extends FrameLayout {
 
-    private View transView;
-    private View lockIcon;
-    private LayoutParams params;
+    private static int mLastLeftPosition = 0;
+    private static int mLastTopPosition = 0;
+    private View mLockIcon;
+    private View bgView;
+    private LayoutParams mLayoutParams;
+    private int availableHeight;
+    private int availableWidth;
+    private int lockHeight;
 
     public FloatingLockView(Context context) {
         super(context);
-        initialise(context, null);
+        init(context, null);
     }
 
     public FloatingLockView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initialise(context, attrs);
+        init(context, attrs);
     }
 
     public FloatingLockView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initialise(context, attrs);
+        init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public FloatingLockView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initialise(context, attrs);
+        init(context, attrs);
     }
 
     public void attachToScreen(Activity activity) {
-        // We get the View of the Activity
         View content = (View) activity.findViewById(android.R.id.content).getParent();
         ViewGroup parent = (ViewGroup) content.getParent();
         parent.addView(this);
     }
 
-    public void updateView() {
+    public void update() {
+        mLayoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
-        params = new LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
-        if (rememberedLeft != 0 && rememberedTop != 0) {
-            params.leftMargin = rememberedLeft;
-            params.topMargin = rememberedTop;
-            lockIcon.setLayoutParams(params);
+        if (mLastLeftPosition != 0 && mLastTopPosition != 0) {
+            mLayoutParams.leftMargin = mLastLeftPosition;
+            mLayoutParams.topMargin = mLastTopPosition;
+            mLockIcon.setLayoutParams(mLayoutParams);
         } else {
-            lockIcon.getViewTreeObserver().addOnGlobalLayoutListener(
+            mLockIcon.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         public void onGlobalLayout() {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                lockIcon.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                mLockIcon.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             } else {
-                                lockIcon.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                                mLockIcon.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                             }
-                            params.leftMargin = (int) lockIcon.getX();
-                            params.topMargin = (int) lockIcon.getY();
-                            lockIcon.setLayoutParams(params);
+                            mLayoutParams.leftMargin = (int) mLockIcon.getX();
+                            mLayoutParams.topMargin = (int) mLockIcon.getY();
+                            mLockIcon.setLayoutParams(mLayoutParams);
                         }
                     }
             );
         }
     }
 
-    public void initialise(Context context, AttributeSet attrs) {
+    public void init(Context context, AttributeSet attrs) {
         View rootView = LayoutInflater.from(context).inflate(R.layout.layout_include_lock_view, this, true);
-        lockIcon = rootView.findViewById(R.id.lock_icon);
-        transView = rootView.findViewById(R.id.t_view);
-        updateView();
-        lockIcon.setOnClickListener(new OnClickListener() {
+        mLockIcon = rootView.findViewById(R.id.lock_icon);
+        bgView = rootView.findViewById(R.id.t_view);
+        update();
+        mLockIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (lockIcon.isSelected()) {
+                if (mLockIcon.isSelected()) {
                     unlock();
                 } else {
                     lock();
                 }
             }
         });
-//        lockIcon.setOnTouchListener(touchListener);
-        lockIcon.setOnLongClickListener(new OnLongClickListener() {
+        mLockIcon.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                params = new FrameLayout.LayoutParams(
-//                        FrameLayout.LayoutParams.WRAP_CONTENT,
-//                        FrameLayout.LayoutParams.WRAP_CONTENT);
                 AnimUtils.scaleViewAnim(v, 1.5f, 1.5f, 1.5f, 1.5f);
-
-                lockIcon.setOnTouchListener(touchListener);
-
+                mLockIcon.setOnTouchListener(touchListener);
                 return false;
             }
         });
@@ -123,13 +115,13 @@ public class FloatingLockView extends FrameLayout {
             }
         });
 
-        lockIcon.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mLockIcon.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                lockHeight = lockIcon.getHeight();
+                lockHeight = mLockIcon.getHeight();
 
                 if (lockHeight > 0) {
-                    lockIcon.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    mLockIcon.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
             }
         });
@@ -146,16 +138,9 @@ public class FloatingLockView extends FrameLayout {
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-//                    params = new FrameLayout.LayoutParams(
-//                            FrameLayout.LayoutParams.WRAP_CONTENT,
-//                            FrameLayout.LayoutParams.WRAP_CONTENT);
 
-                    initialX = params.leftMargin;
-                    initialY = params.topMargin;
-//                    initialX = v.getX();
-//                    initialY= v.getY();
-//                    initialX = params.leftMargin;
-//                    initialY = params.topMargin;
+                    initialX = mLayoutParams.leftMargin;
+                    initialY = mLayoutParams.topMargin;
 
                     initialTouchX = event.getRawX();
                     initialTouchY = event.getRawY();
@@ -163,7 +148,7 @@ public class FloatingLockView extends FrameLayout {
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (lastAction == MotionEvent.ACTION_DOWN) {
-                        if (lockIcon.isSelected()) {
+                        if (mLockIcon.isSelected()) {
                             unlock();
                         } else {
                             lock();
@@ -171,56 +156,48 @@ public class FloatingLockView extends FrameLayout {
                     } else {
                         AnimUtils.scaleViewAnim(v, 1f, 1f, 1f, 1f);
 
-                        lockIcon.setOnTouchListener(null);
-//                        params = new FrameLayout.LayoutParams(
-//                                FrameLayout.LayoutParams.WRAP_CONTENT,
-//                                FrameLayout.LayoutParams.WRAP_CONTENT);
+                        mLockIcon.setOnTouchListener(null);
 
-                        if (params.leftMargin <= 0) {
-                            params.leftMargin = 30;
+                        if (mLayoutParams.leftMargin <= 0) {
+                            mLayoutParams.leftMargin = 30;
                         }
-                        if (params.topMargin <= 0) {
-                            params.topMargin = 30;
+                        if (mLayoutParams.topMargin <= 0) {
+                            mLayoutParams.topMargin = 30;
                         }
-                        if (params.topMargin >= availableHeight - lockHeight) {
-                            params.topMargin = availableHeight - lockHeight - 30;
+                        if (mLayoutParams.topMargin >= availableHeight - lockHeight) {
+                            mLayoutParams.topMargin = availableHeight - lockHeight - 30;
                         }
-                        if (params.leftMargin >= availableWidth - lockHeight) {
-                            params.leftMargin = availableWidth - lockHeight - 30;
+                        if (mLayoutParams.leftMargin >= availableWidth - lockHeight) {
+                            mLayoutParams.leftMargin = availableWidth - lockHeight - 30;
                         }
-                        rememberedLeft = params.leftMargin;
-                        rememberedTop = params.topMargin;
-                        lockIcon.setLayoutParams(params);
+                        mLastLeftPosition = mLayoutParams.leftMargin;
+                        mLastTopPosition = mLayoutParams.topMargin;
+                        mLockIcon.setLayoutParams(mLayoutParams);
                     }
 
                     lastAction = event.getAction();
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    Log.d("Parems", lockHeight + ":Lock height:" + availableWidth + ":Left:" + params.leftMargin + " :top:" + params.topMargin + ":right:" + params.rightMargin + ":params.bottomMargin:" + params.bottomMargin);
-                    if (params.leftMargin >= 0 && params.topMargin >= 0 && params.rightMargin >= 0 &&
-                            params.bottomMargin >= 0 && params.topMargin < availableHeight - lockHeight && params.leftMargin < availableWidth - lockHeight) {
-                        isMove = true;
-                        params.leftMargin = initialX + (int) (event.getRawX() - initialTouchX) - lockHeight;
-                        params.topMargin = initialY + (int) (event.getRawY() - initialTouchY) - lockHeight;
-
-//                        params.leftMargin = (int)(initialX + (event.getRawX() - initialTouchX));
-//                        params.topMargin = (int)(initialY +  (event.getRawY() - initialTouchY));
-
+                    Log.d("Parems", lockHeight + ":Lock height:" + availableWidth + ":Left:" + mLayoutParams.leftMargin + " :top:" + mLayoutParams.topMargin + ":right:" + mLayoutParams.rightMargin + ":mLayoutParams.bottomMargin:" + mLayoutParams.bottomMargin);
+                    if (mLayoutParams.leftMargin >= 0 && mLayoutParams.topMargin >= 0 && mLayoutParams.rightMargin >= 0 &&
+                            mLayoutParams.bottomMargin >= 0 && mLayoutParams.topMargin < availableHeight - lockHeight && mLayoutParams.leftMargin < availableWidth - lockHeight) {
+                        mLayoutParams.leftMargin = initialX + (int) (event.getRawX() - initialTouchX) - lockHeight;
+                        mLayoutParams.topMargin = initialY + (int) (event.getRawY() - initialTouchY) - lockHeight;
                         lastAction = event.getAction();
-                        lockIcon.setLayoutParams(params);
+                        mLockIcon.setLayoutParams(mLayoutParams);
                     } else {
                         lastAction = event.getAction();
-                        if (params.leftMargin <= 0) {
-                            params.leftMargin = 30;
+                        if (mLayoutParams.leftMargin <= 0) {
+                            mLayoutParams.leftMargin = 30;
                         }
-                        if (params.topMargin <= 0) {
-                            params.topMargin = 30;
+                        if (mLayoutParams.topMargin <= 0) {
+                            mLayoutParams.topMargin = 30;
                         }
-                        if (params.topMargin >= availableHeight - lockHeight) {
-                            params.topMargin = availableHeight - lockHeight - 30;
+                        if (mLayoutParams.topMargin >= availableHeight - lockHeight) {
+                            mLayoutParams.topMargin = availableHeight - lockHeight - 30;
                         }
-                        if (params.leftMargin >= availableWidth - lockHeight) {
-                            params.leftMargin = availableWidth - lockHeight - 30;
+                        if (mLayoutParams.leftMargin >= availableWidth - lockHeight) {
+                            mLayoutParams.leftMargin = availableWidth - lockHeight - 30;
                         }
                     }
                     return true;
@@ -229,27 +206,18 @@ public class FloatingLockView extends FrameLayout {
         }
     };
 
-    boolean isMove = false;
-    int availableHeight;
-    int availableWidth;
-    int lockHeight;
-    static int rememberedLeft = 0;
-    static int rememberedTop = 0;
-
     public void lock() {
-        lockIcon.setSelected(true);
-        transView.setVisibility(VISIBLE);
-        lockIcon.setTag("close");
+        mLockIcon.setSelected(true);
+        bgView.setVisibility(VISIBLE);
     }
 
     public void unlock() {
-        lockIcon.setSelected(false);
-        transView.setVisibility(GONE);
-        lockIcon.setTag("open");
+        mLockIcon.setSelected(false);
+        bgView.setVisibility(GONE);
     }
 
     public boolean isLocked() {
-        return lockIcon.isSelected();
+        return mLockIcon.isSelected();
     }
 
 }
