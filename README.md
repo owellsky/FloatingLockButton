@@ -3,8 +3,14 @@
 How to use in the Activity
 
 ` FloatingLockView lockView = new FloatingLockView(this);
-         lockView.attachToScreen(this);
+        
 `
+
+
+`  lockView.attachToScreen(this);
+        
+`
+
 
 Long Press to move the button.
 
