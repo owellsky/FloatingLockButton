@@ -5,6 +5,7 @@ How to use in the Activity
 ` FloatingLockView lockView = new FloatingLockView(this);
          lockView.attachToScreen(this);
 `
+
 Long Press to move the button.
 
 To update the floating lock button,
