@@ -1,4 +1,4 @@
-package com.nilesh.lockbutton.customeviews;
+package com.nilesh.lockbutton.customview;
 
 import android.app.Activity;
 import android.content.Context;
@@ -88,6 +88,7 @@ public class FloatingLockView extends FrameLayout {
         mLockIcon.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                mLockIcon.setAlpha(1F);
                 AnimUtils.scaleViewAnim(v, 1.5f, 1.5f, 1.5f, 1.5f);
                 mLockIcon.setOnTouchListener(touchListener);
                 return false;
@@ -158,7 +159,11 @@ public class FloatingLockView extends FrameLayout {
                         }
                     } else {
                         AnimUtils.scaleViewAnim(v, 1f, 1f, 1f, 1f);
-
+                        if (mLockIcon.isSelected()) {
+                            mLockIcon.setAlpha(1F);
+                        } else {
+                            mLockIcon.setAlpha(.6F);
+                        }
                         mLockIcon.setOnTouchListener(null);
 
                         if (mLayoutParams.leftMargin <= 0) {
@@ -209,11 +214,13 @@ public class FloatingLockView extends FrameLayout {
     };
 
     public void lock() {
+        mLockIcon.setAlpha(1F);
         mLockIcon.setSelected(true);
         bgView.setVisibility(VISIBLE);
     }
 
     public void unlock() {
+        mLockIcon.setAlpha(.6F);
         mLockIcon.setSelected(false);
         bgView.setVisibility(GONE);
     }

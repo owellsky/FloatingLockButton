@@ -3,9 +3,8 @@ package com.nilesh.lockbutton;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 
-import com.nilesh.lockbutton.customeviews.FloatingLockView;
+import com.nilesh.lockbutton.customview.FloatingLockView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,15 +14,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingLockView lockView = new FloatingLockView(this);
         lockView.attachToScreen(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 }
