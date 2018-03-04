@@ -2,30 +2,24 @@
 
 How to use in the Activity
 
-` FloatingLockView lockView = new FloatingLockView(this);
-        
-`
+`FloatingLockView lockView = new FloatingLockView(this); `
 
 
-`  lockView.attachToScreen(this);
-        
-`
+`lockView.attachToScreen(this);`
 
 
-Long Press to move the button.
+#Long Press and move the button.
 
-To update the floating lock button,
+#To update the floating lock button,
 
 
 `lockView.updateView()`
 
-To lock
-
+#To lock
 
 `lockView.lock()`
 
-To Unlock
-
+#To Unlock
 
 `lockView.unlock()`
 
