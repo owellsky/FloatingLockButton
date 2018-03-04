@@ -22,10 +22,7 @@ To Unlock
 
 `lockView.unlock()`
 
-<img src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/unlock_1.png" data-canonical-src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/unlock_1.png" width="300" height="400" />
+<img src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/unlock_1.png" data-canonical-src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/unlock_1.png" width="250" height="400" />
 
-<img src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/lock_1.png" data-canonical-src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/lock_1.png" width="300" height="400" />
-
-[![Unlock Screen](https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/unlock_1.png)]
-
-[![Lock Screen](https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/lock_1.png)]
+<img src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/lock_1.png" data-canonical-src="https://github.com/nileshpawate/FloatingLockButton/blob/master/demo/lock_1.png" width="250" height="400" />
+ 
